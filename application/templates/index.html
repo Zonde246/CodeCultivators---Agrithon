@@ -3,148 +3,1510 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Multimodal Disease & Insect Detection System</title>
-    <link rel="stylesheet" href="static/styles.css">
+    <title>Simple Sugarcane AI - 45 Questions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2E7D0F 0%, #4CAF50 25%, #8BC34A 50%, #66BB6A 75%, #2E7D0F 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1B5E20 0%, #4CAF50 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .header p {
+            font-size: 1.3em;
+            opacity: 0.95;
+        }
+
+        .content {
+            padding: 50px;
+        }
+
+        .features-badge {
+            background: linear-gradient(135deg, #FF9800, #FFA726);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 25px;
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+
+        .pipeline-selector {
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .pipeline-title {
+            font-size: 2.2em;
+            color: #1B5E20;
+            margin-bottom: 20px;
+        }
+
+        .pipeline-subtitle {
+            font-size: 1.2em;
+            color: #555;
+            margin-bottom: 30px;
+        }
+
+        .pipeline-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .pipeline-card {
+            border: 3px solid #e0f2e0;
+            border-radius: 25px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .pipeline-card:hover {
+            border-color: #4CAF50;
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(76, 175, 80, 0.15);
+        }
+
+        .pipeline-card.selected {
+            border-color: #2E7D0F;
+            background: rgba(232, 245, 232, 0.9);
+            transform: translateY(-5px);
+        }
+
+        .pipeline-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .pipeline-card h3 {
+            color: #1B5E20;
+            margin-bottom: 15px;
+            font-size: 1.6em;
+        }
+
+        .pipeline-card p {
+            color: #555;
+            line-height: 1.6;
+            font-size: 1.1em;
+        }
+
+        .individual-analysis {
+            margin-top: 40px;
+        }
+
+        .section-title {
+            font-size: 2em;
+            color: #1B5E20;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .model-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .model-card {
+            border: 2px solid #e0f2e0;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+            position: relative;
+        }
+
+        .model-card:hover {
+            border-color: #4CAF50;
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(76, 175, 80, 0.15);
+        }
+
+        .model-card.selected {
+            border-color: #2E7D0F;
+            background: rgba(232, 245, 232, 0.9);
+        }
+
+        .input-type-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(135deg, #FF9800, #FFA726);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .model-card h3 {
+            color: #1B5E20;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        .model-card p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .status-loaded {
+            background: #4CAF50;
+        }
+
+        .status-not-loaded {
+            background: #F44336;
+        }
+
+        .fusion-pipeline {
+            display: none;
+            margin-top: 40px;
+        }
+
+        .fusion-pipeline.show {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .pipeline-steps {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 40px;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .step-indicator {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.4em;
+            border: 3px solid;
+            transition: all 0.3s ease;
+        }
+
+        .step-indicator.pending {
+            background: #f0f0f0;
+            color: #999;
+            border-color: #ddd;
+        }
+
+        .step-indicator.active {
+            background: linear-gradient(135deg, #4CAF50, #66BB6A);
+            color: white;
+            border-color: #4CAF50;
+        }
+
+        .step-indicator.completed {
+            background: linear-gradient(135deg, #1B5E20, #2E7D0F);
+            color: white;
+            border-color: #1B5E20;
+        }
+
+        .step-arrow {
+            font-size: 2em;
+            color: #4CAF50;
+        }
+
+        .step-content {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            border: 2px solid #e0f2e0;
+            display: none;
+        }
+
+        .step-content.active {
+            display: block;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-title {
+            font-size: 1.8em;
+            color: #1B5E20;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .quiz-container {
+            background: rgba(248, 255, 248, 0.8);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .quiz-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #1B5E20;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .quiz-progress {
+            background: #e0e0e0;
+            height: 8px;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .quiz-progress-fill {
+            background: linear-gradient(90deg, #1B5E20, #4CAF50);
+            height: 100%;
+            transition: width 0.5s ease;
+            border-radius: 4px;
+        }
+
+        .questions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .question-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid #e0f2e0;
+            transition: all 0.3s ease;
+        }
+
+        .question-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.15);
+        }
+
+        .question-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .question-number {
+            background: linear-gradient(135deg, #1B5E20, #4CAF50);
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .question-illustration {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 2px solid #e0f2e0;
+            background: #f8fff8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            flex-shrink: 0;
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            color: #333;
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        .answer-options {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .answer-btn {
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid #e0f2e0;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .answer-btn:hover {
+            border-color: #4CAF50;
+            background: #f8fff8;
+        }
+
+        .answer-btn.selected {
+            border-color: #1B5E20;
+            background: #e8f5e8;
+            color: #1B5E20;
+        }
+
+        .image-upload {
+            text-align: center;
+            padding: 40px;
+            border: 3px dashed #8BC34A;
+            border-radius: 20px;
+            background: rgba(248, 255, 248, 0.8);
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .image-upload.dragover {
+            border-color: #4CAF50;
+            background: rgba(232, 245, 232, 0.8);
+        }
+
+        .upload-icon {
+            font-size: 4em;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        .upload-text {
+            font-size: 1.3em;
+            color: #1B5E20;
+            margin-bottom: 20px;
+        }
+
+        .upload-btn {
+            background: linear-gradient(135deg, #4CAF50, #66BB6A);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .file-preview {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .file-preview.show {
+            display: block;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .action-buttons {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, #1B5E20, #4CAF50);
+            color: white;
+            padding: 18px 40px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.2em;
+            margin: 0 15px;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+        }
+
+        .action-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .action-btn.secondary {
+            background: linear-gradient(135deg, #FF9800, #FFA726);
+        }
+
+        .results-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .results-title {
+            font-size: 2.5em;
+            color: #1B5E20;
+            margin-bottom: 15px;
+        }
+
+        .results-subtitle {
+            font-size: 1.2em;
+            color: #555;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .result-panel {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            border: 2px solid #e0f2e0;
+            transition: all 0.3s ease;
+        }
+
+        .result-panel:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(76, 175, 80, 0.15);
+        }
+
+        .result-panel h3 {
+            color: #1B5E20;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+
+        .confidence-score {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .confidence-score.high {
+            color: #4CAF50;
+        }
+
+        .confidence-score.medium {
+            color: #FF9800;
+        }
+
+        .confidence-score.low {
+            color: #F44336;
+        }
+
+        .fusion-confidence {
+            background: rgba(232, 245, 232, 0.9);
+            border: 3px solid #4CAF50;
+        }
+
+        .fusion-confidence h3 {
+            color: #1B5E20;
+            font-size: 1.8em;
+        }
+
+        .fusion-confidence .confidence-score {
+            font-size: 3em;
+            color: #1B5E20;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4CAF50;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 25px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            color: #D32F2F;
+            background: rgba(255, 235, 238, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 25px;
+            border-left: 5px solid #F44336;
+            display: none;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .pipeline-options, .model-grid, .results-grid, .questions-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .pipeline-steps {
+                flex-direction: column;
+            }
+            
+            .step-arrow {
+                transform: rotate(90deg);
+            }
+            
+            .content {
+                padding: 25px;
+            }
+
+            .question-header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .questions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🔬 AI Crop Diagnostic System</h1>
-            <p>Multi-Modal Disease & Insect Detection Platform</p>
+            <h1>🌾 Simple Sugarcane AI</h1>
+            <p>Easy 45-Question Disease & Pest Detection for Farmers</p>
         </div>
         
         <div class="content">
-            <div class="model-selector">
-                <h2>Select Detection Method & Input Type</h2>
-                <div class="model-grid">
-                    <div class="model-card" data-model="disease_yolo" data-input="image">
-                        <div class="input-type-badge">IMAGE</div>
-                        <h3>🦠 Disease Detection</h3>
-                        <p>Upload plant images for AI-powered disease detection using YOLOv8 segmentation</p>
-                        <div class="status">
-                            <span class="status-indicator status-not-loaded" id="status-disease-yolo"></span>
-                            <span>Model Status</span>
-                        </div>
+            <div class="features-badge">
+                ✅ 45 Simple Questions Only | 🚫 No Complex Expert Terms | ⚡ 5-10 Minutes | 🎯 Farmer-Friendly
+            </div>
+
+            <div class="pipeline-selector">
+                <h2 class="pipeline-title">Choose Your Detection Method</h2>
+                <p class="pipeline-subtitle">Select between individual analysis or our smart AI fusion system</p>
+                
+                <div class="pipeline-options">
+                    <div class="pipeline-card" data-pipeline="individual">
+                        <span class="pipeline-icon">🔬</span>
+                        <h3>Individual Analysis</h3>
+                        <p>Choose specific detection methods - simple quiz, image analysis, or data upload for targeted diagnosis</p>
                     </div>
                     
-                    <div class="model-card" data-model="insect_yolo" data-input="image">
-                        <div class="input-type-badge">IMAGE</div>
-                        <h3>🐛 Insect Detection</h3>
-                        <p>Upload crop images for automated insect and pest identification</p>
-                        <div class="status">
-                            <span class="status-indicator status-not-loaded" id="status-insect-yolo"></span>
-                            <span>Model Status</span>
-                        </div>
+                    <div class="pipeline-card" data-pipeline="fusion">
+                        <span class="pipeline-icon">🧬</span>
+                        <h3>Smart AI Fusion</h3>
+                        <p>Complete the simple 45-question quiz first, then upload an image for combined AI analysis with higher accuracy</p>
                     </div>
-                    
-                    <div class="model-card" data-model="disease_tabnet" data-input="data">
-                        <div class="input-type-badge">CSV</div>
-                        <h3>📊 Disease Analysis</h3>
-                        <p>Upload CSV data files for structured disease analysis using TabNet</p>
-                        <div class="status">
-                            <span class="status-indicator status-not-loaded" id="status-disease-tabnet"></span>
-                            <span>Model Status</span>
+                </div>
+            </div>
+
+            <div id="individualAnalysis" class="individual-analysis hidden">
+                <div class="model-selector">
+                    <h2 class="section-title">Select Detection Method & Input Type</h2>
+                    <div class="model-grid">
+                        <div class="model-card" data-model="disease_yolo" data-input="image">
+                            <div class="input-type-badge">IMAGE</div>
+                            <div class="model-card-content">
+                                <h3>🦠 Disease Detection</h3>
+                                <p>Upload sugarcane field images for AI-powered disease identification</p>
+                                <div class="status">
+                                    <span class="status-indicator status-not-loaded" id="status-disease-yolo"></span>
+                                    <span>Model Status</span>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div class="model-card" data-model="insect_tabnet" data-input="data">
-                        <div class="input-type-badge">CSV</div>
-                        <h3>📈 Insect Analysis</h3>
-                        <p>Upload CSV data files for structured insect detection using TabNet</p>
-                        <div class="status">
-                            <span class="status-indicator status-not-loaded" id="status-insect-tabnet"></span>
-                            <span>Model Status</span>
+                        
+                        <div class="model-card" data-model="insect_yolo" data-input="image">
+                            <div class="input-type-badge">IMAGE</div>
+                            <div class="model-card-content">
+                                <h3>🐛 Pest Detection</h3>
+                                <p>Upload crop images for automated pest identification</p>
+                                <div class="status">
+                                    <span class="status-indicator status-not-loaded" id="status-insect-yolo"></span>
+                                    <span>Model Status</span>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div class="model-card" data-model="disease_tabnet" data-input="quiz">
-                        <div class="input-type-badge">QUIZ</div>
-                        <h3>📋 Disease Assessment</h3>
-                        <p>Answer 30 diagnostic questions about plant symptoms for disease analysis</p>
-                        <div class="status">
-                            <span class="status-indicator status-not-loaded" id="status-disease-tabnet-quiz"></span>
-                            <span>Model Status</span>
+                        
+                        <div class="model-card" data-model="disease_tabnet" data-input="quiz">
+                            <div class="input-type-badge">45 QUESTIONS</div>
+                            <div class="model-card-content">
+                                <h3>📋 Disease Assessment</h3>
+                                <p>Complete simple diagnostic questionnaire for disease analysis</p>
+                                <div class="status">
+                                    <span class="status-indicator status-not-loaded" id="status-disease-tabnet-quiz"></span>
+                                    <span>Model Status</span>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div class="model-card" data-model="insect_tabnet" data-input="quiz">
-                        <div class="input-type-badge">QUIZ</div>
-                        <h3>🔍 Armyworm Assessment</h3>
-                        <p>Complete a detailed questionnaire to identify armyworm infestations</p>
-                        <div class="status">
-                            <span class="status-indicator status-not-loaded" id="status-insect-tabnet-quiz"></span>
-                            <span>Model Status</span>
+                        
+                        <div class="model-card" data-model="insect_tabnet" data-input="quiz">
+                            <div class="input-type-badge">45 QUESTIONS</div>
+                            <div class="model-card-content">
+                                <h3>🔍 Pest Assessment</h3>
+                                <p>Complete simple questionnaire for pest detection</p>
+                                <div class="status">
+                                    <span class="status-indicator status-not-loaded" id="status-insect-tabnet-quiz"></span>
+                                    <span>Model Status</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- File Upload Section -->
-            <div class="upload-section" id="uploadSection">
-                <h3 id="uploadTitle">Upload Your Data</h3>
-                <p id="uploadInstructions">Select a detection method first</p>
-                <input type="file" id="fileInput" class="file-input" accept="">
-                <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
-                    📁 Choose File
-                </button>
-                <div class="file-info" id="fileInfo">
-                    <strong>Selected file:</strong> <span id="fileName"></span>
-                </div>
-                <button class="predict-btn" id="predictBtn" disabled>🔍 Start Analysis</button>
-            </div>
-
-            <!-- Quiz Section -->
-            <div class="quiz-section" id="quizSection">
-                <div class="quiz-header">
-                    <h3 id="quizTitle">Assessment Questions</h3>
-                    <div class="quiz-stats">
-                        <div class="stat-item">
-                            <div class="stat-value" id="answeredCount">0</div>
-                            <div class="stat-label">Answered</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value">30</div>
-                            <div class="stat-label">Total Questions</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value" id="progressPercent">0%</div>
-                            <div class="stat-label">Progress</div>
-                        </div>
+            <div id="fusionPipeline" class="fusion-pipeline">
+                <div class="pipeline-steps">
+                    <div class="step">
+                        <div class="step-indicator active" id="step1-indicator">1</div>
+                        <span>Choose Target</span>
                     </div>
-                    <div class="quiz-progress">
-                        <div class="quiz-progress-fill" id="progressBar"></div>
+                    <div class="step-arrow">→</div>
+                    <div class="step">
+                        <div class="step-indicator pending" id="step2-indicator">2</div>
+                        <span>Simple Quiz</span>
+                    </div>
+                    <div class="step-arrow">→</div>
+                    <div class="step">
+                        <div class="step-indicator pending" id="step3-indicator">3</div>
+                        <span>Upload Image</span>
+                    </div>
+                    <div class="step-arrow">→</div>
+                    <div class="step">
+                        <div class="step-indicator pending" id="step4-indicator">🧬</div>
+                        <span>Smart Results</span>
                     </div>
                 </div>
 
-                <div class="questions-container" id="questionsContainer">
-                    <!-- Questions will be dynamically generated here -->
+                <div class="step-content active" id="step1-content">
+                    <h3 class="step-title">Step 1: Choose What to Detect</h3>
+                    <div class="pipeline-options">
+                        <div class="pipeline-card" data-target="disease">
+                            <span class="pipeline-icon">🦠</span>
+                            <h3>Disease Detection</h3>
+                            <p>Detect sugarcane diseases through simple 45-question assessment and image analysis</p>
+                        </div>
+                        
+                        <div class="pipeline-card" data-target="esb">
+                            <span class="pipeline-icon">🐛</span>
+                            <h3>Pest Detection</h3>
+                            <p>Identify pests and early shoot borer infestations using simple questions and AI analysis</p>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn" id="proceedToQuiz" disabled onclick="proceedToQuiz()">
+                            Proceed to Simple Quiz →
+                        </button>
+                    </div>
                 </div>
 
-                <div class="quiz-actions">
-                    <button class="reset-quiz-btn" onclick="resetQuiz()">🔄 Reset All</button>
-                    <button class="submit-quiz-btn" id="submitQuizBtn" disabled onclick="submitQuiz()">
-                        ✅ Submit Assessment
-                    </button>
+                <div class="step-content" id="step2-content">
+                    <h3 class="step-title" id="quizStepTitle">Step 2: Complete Simple Assessment</h3>
+                    <div class="quiz-container">
+                        <div class="quiz-stats">
+                            <div class="stat-item">
+                                <div class="stat-value" id="answeredCount">0</div>
+                                <div class="stat-label">Answered</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">45</div>
+                                <div class="stat-label">Simple Questions</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="progressPercent">0%</div>
+                                <div class="stat-label">Progress</div>
+                            </div>
+                        </div>
+                        
+                        <div class="quiz-progress">
+                            <div class="quiz-progress-fill" id="progressBar"></div>
+                        </div>
+                        
+                        <div class="questions-grid" id="questionsContainer">
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="action-btn secondary" onclick="goBackToTarget()">
+                            ← Back to Target Selection
+                        </button>
+                        <button class="action-btn" id="completeQuiz" disabled onclick="completeQuiz()">
+                            Complete Simple Quiz →
+                        </button>
+                    </div>
+                </div>
+
+                <div class="step-content" id="step3-content">
+                    <h3 class="step-title">Step 3: Upload Sugarcane Image</h3>
+                    <div class="image-upload" id="imageUploadArea">
+                        <div class="upload-icon">📸</div>
+                        <div class="upload-text">Upload an image of your sugarcane crop</div>
+                        <p>Drag and drop an image here or click to select</p>
+                        <input type="file" id="fusionFileInput" class="file-input" accept=".png,.jpg,.jpeg,.gif">
+                        <button class="upload-btn" onclick="document.getElementById('fusionFileInput').click()">
+                            📁 Choose Image
+                        </button>
+                        <div class="file-preview" id="filePreview">
+                            <img id="previewImage" class="preview-image" alt="Preview">
+                            <p id="fileName"></p>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="action-btn secondary" onclick="goBackToQuiz()">
+                            ← Back to Quiz
+                        </button>
+                        <button class="action-btn" id="startFusionAnalysis" disabled onclick="startFusionAnalysis()">
+                            🧬 Start Smart AI Analysis
+                        </button>
+                    </div>
+                </div>
+
+                <div class="step-content" id="step4-content">
+                    <div class="results-header">
+                        <h3 class="results-title">🧬 Smart AI Results</h3>
+                        <p class="results-subtitle">Combined analysis from simple quiz and image detection</p>
+                    </div>
+                    
+                    <div class="results-grid">
+                        <div class="result-panel">
+                            <h3>📋 Quiz Analysis</h3>
+                            <div class="confidence-score" id="quizConfidence">--</div>
+                            <p id="quizResult">Processing assessment...</p>
+                        </div>
+                        
+                        <div class="result-panel">
+                            <h3>📸 Image Analysis</h3>
+                            <div class="confidence-score" id="imageConfidence">--</div>
+                            <p id="imageResult">Processing image...</p>
+                        </div>
+                        
+                        <div class="result-panel fusion-confidence">
+                            <h3>🧬 Smart AI Score</h3>
+                            <div class="confidence-score" id="fusionConfidence">--</div>
+                            <p id="fusionResult">Calculating smart results...</p>
+                        </div>
+                    </div>
+                    
+                    <div id="detailedResults" class="detailed-results"></div>
+                    
+                    <div class="action-buttons">
+                        <button class="action-btn secondary" onclick="startNewAnalysis()">
+                            🔄 Start New Analysis
+                        </button>
+                        <button class="action-btn" onclick="downloadResults()">
+                            📄 Download Report
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            <!-- Results Section -->
-            <div class="results" id="results">
-                <h3>Analysis Results</h3>
-                <div id="resultContent"></div>
-            </div>
-
-            <!-- Loading Section -->
             <div class="loading" id="loading">
                 <div class="spinner"></div>
-                <p>Processing your request...</p>
+                <p>Processing smart AI analysis...</p>
             </div>
 
-            <!-- Error Section -->
-            <div class="error" id="error" style="display: none;"></div>
+            <div class="error" id="error"></div>
         </div>
     </div>
 
-    <script src="static/scripts.js"></script>
+    <script>
+        let currentPipeline = null;
+        let fusionTarget = null;
+        let currentStep = 1;
+        let quizAnswers = {};
+        let selectedFile = null;
+        let currentQuestionSet = [];
+        let quizResult = null;
+        let imageResult = null;
+        let sessionId = null;
+        
+        let DEAD_HEART_QUESTIONS = [];
+        let TILLER_QUESTIONS = [];
+        let DISEASE_QUESTIONS = [];
+
+        // Question illustrations mapping
+        const QUESTION_ILLUSTRATIONS = {
+            // Disease-related illustrations
+            'yellowing': '🟡',
+            'brown': '🟤', 
+            'spots': '🔴',
+            'wilting': '🥀',
+            'dried': '🍂',
+            'lesions': '🩹',
+            'rot': '💀',
+            'fungus': '🍄',
+            'mold': '🦠',
+            'disease': '🦠',
+            'infected': '☣️',
+            'dead': '💀',
+            'dying': '⚰️',
+            'damaged': '💥',
+            'unhealthy': '😷',
+            
+            // Pest-related illustrations
+            'holes': '⚫',
+            'bore': '🕳️',
+            'tunnel': '🕳️',
+            'insect': '🐛',
+            'pest': '🐛',
+            'caterpillar': '🐛',
+            'larva': '🐛',
+            'egg': '🥚',
+            'infestation': '🐛',
+            'bite': '🦷',
+            'chewed': '🦷',
+            'eaten': '🍽️',
+            
+            // Plant parts
+            'leaves': '🍃',
+            'stem': '🌿',
+            'shoot': '🌱',
+            'tiller': '🌿',
+            'root': '🌱',
+            'cane': '🎋',
+            'node': '⭕',
+            'internode': '📏',
+            
+            // Environmental
+            'water': '💧',
+            'rain': '🌧️',
+            'drought': '☀️',
+            'soil': '🌍',
+            'field': '🌾',
+            'crop': '🌾',
+            'growth': '📈',
+            'height': '📏',
+            'size': '📐'
+        };
+
+        window.onload = function() {
+            sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            setupPipelineSelection();
+            loadQuizQuestions();
+            setupFileUpload();
+            setupDragDrop();
+            checkModelStatus();
+        };
+
+        function getQuestionIllustration(questionText) {
+            const text = questionText.toLowerCase();
+            
+            // Check for specific keywords and return appropriate illustration
+            for (const [keyword, emoji] of Object.entries(QUESTION_ILLUSTRATIONS)) {
+                if (text.includes(keyword)) {
+                    return emoji;
+                }
+            }
+            
+            // Default illustrations based on question patterns
+            if (text.includes('see') || text.includes('notice') || text.includes('observe')) {
+                return '👁️';
+            }
+            if (text.includes('count') || text.includes('number') || text.includes('many')) {
+                return '🔢';
+            }
+            if (text.includes('color') || text.includes('colour')) {
+                return '🎨';
+            }
+            if (text.includes('size') || text.includes('big') || text.includes('small')) {
+                return '📏';
+            }
+            if (text.includes('time') || text.includes('when') || text.includes('day')) {
+                return '⏰';
+            }
+            if (text.includes('weather') || text.includes('climate')) {
+                return '🌤️';
+            }
+            
+            // Default illustration
+            return '🌾';
+        }
+
+        function checkModelStatus() {
+            fetch('/model_status')
+                .then(response => response.json())
+                .then(data => {
+                    updateModelStatusIndicators(data);
+                })
+                .catch(error => {
+                    console.error('Error checking model status:', error);
+                });
+        }
+
+        function updateModelStatusIndicators(status) {
+            const indicators = {
+                'status-disease-yolo': status.disease_yolo,
+                'status-insect-yolo': status.insect_yolo,
+                'status-disease-tabnet-quiz': status.disease_tabnet,
+                'status-insect-tabnet-quiz': status.insect_tabnet
+            };
+
+            Object.entries(indicators).forEach(([id, loaded]) => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.className = loaded ? 'status-indicator status-loaded' : 'status-indicator status-not-loaded';
+                }
+            });
+        }
+
+        function setupPipelineSelection() {
+            document.querySelectorAll('.pipeline-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    if (this.dataset.pipeline) {
+                        selectPipeline(this.dataset.pipeline);
+                    } else if (this.dataset.target) {
+                        selectTarget(this.dataset.target);
+                    }
+                });
+            });
+        }
+
+        function selectPipeline(pipeline) {
+            currentPipeline = pipeline;
+            
+            document.querySelectorAll('.pipeline-card').forEach(c => c.classList.remove('selected'));
+            document.querySelector(`[data-pipeline="${pipeline}"]`).classList.add('selected');
+            
+            if (pipeline === 'individual') {
+                document.getElementById('individualAnalysis').classList.remove('hidden');
+                document.getElementById('fusionPipeline').classList.remove('show');
+            } else if (pipeline === 'fusion') {
+                document.getElementById('individualAnalysis').classList.add('hidden');
+                document.getElementById('fusionPipeline').classList.add('show');
+            }
+        }
+
+        function selectTarget(target) {
+            fusionTarget = target;
+            
+            document.querySelectorAll('#step1-content .pipeline-card').forEach(c => c.classList.remove('selected'));
+            document.querySelector(`[data-target="${target}"]`).classList.add('selected');
+            
+            document.getElementById('proceedToQuiz').disabled = false;
+        }
+
+        function proceedToQuiz() {
+            if (!fusionTarget) return;
+            
+            updateStepIndicators(2);
+            showStep(2);
+            
+            const quizTitle = fusionTarget === 'disease' ? 
+                'Disease Assessment - Simple Questions' : 
+                'Pest Assessment - Simple Questions';
+            document.getElementById('quizStepTitle').textContent = `Step 2: ${quizTitle}`;
+            
+            generateQuiz();
+        }
+
+        function loadQuizQuestions() {
+            fetch('/quiz_questions')
+                .then(response => response.json())
+                .then(data => {
+                    DEAD_HEART_QUESTIONS = data.dead_heart_questions || [];
+                    TILLER_QUESTIONS = data.tiller_questions || [];
+                    DISEASE_QUESTIONS = data.disease_questions || [];
+                    console.log('Loaded question sets:', {
+                        dead_heart: DEAD_HEART_QUESTIONS.length,
+                        tiller: TILLER_QUESTIONS.length,
+                        disease: DISEASE_QUESTIONS.length
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading quiz questions:', error);
+                });
+        }
+
+        function generateQuiz() {
+            if (fusionTarget === 'esb') {
+                currentQuestionSet = DEAD_HEART_QUESTIONS;
+            } else if (fusionTarget === 'disease') {
+                currentQuestionSet = DISEASE_QUESTIONS;
+            }
+            
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+            
+            for (let index = 0; index < Math.min(45, currentQuestionSet.length); index++) {
+                createQuestionCard(currentQuestionSet[index], index, container);
+            }
+            
+            resetQuiz();
+        }
+
+        function createQuestionCard(question, index, container) {
+            const questionCard = document.createElement('div');
+            questionCard.className = 'question-card';
+            
+            const illustration = getQuestionIllustration(question);
+            
+            questionCard.innerHTML = `
+                <div class="question-header">
+                    <div class="question-number">${index + 1}</div>
+                    <div class="question-illustration">${illustration}</div>
+                    <div class="question-text">${question}</div>
+                </div>
+                <div class="answer-options">
+                    <button class="answer-btn" data-question="${index}" data-answer="1" onclick="selectAnswer(${index}, 1, this)">
+                        ✅ Yes
+                    </button>
+                    <button class="answer-btn" data-question="${index}" data-answer="0" onclick="selectAnswer(${index}, 0, this)">
+                        ❌ No
+                    </button>
+                </div>
+            `;
+            container.appendChild(questionCard);
+        }
+
+        function selectAnswer(questionIndex, answer, buttonElement) {
+            const questionCard = buttonElement.closest('.question-card');
+            questionCard.querySelectorAll('.answer-btn').forEach(btn => btn.classList.remove('selected'));
+            
+            buttonElement.classList.add('selected');
+            quizAnswers[questionIndex] = answer;
+            
+            updateQuizProgress();
+        }
+
+        function updateQuizProgress() {
+            const totalQuestions = 45;
+            const answeredCount = Object.keys(quizAnswers).length;
+            const progressPercent = Math.round((answeredCount / totalQuestions) * 100);
+            
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('progressPercent').textContent = progressPercent + '%';
+            document.getElementById('progressBar').style.width = progressPercent + '%';
+            
+            document.getElementById('completeQuiz').disabled = answeredCount < totalQuestions;
+        }
+
+        function resetQuiz() {
+            quizAnswers = {};
+            document.querySelectorAll('.answer-btn').forEach(btn => btn.classList.remove('selected'));
+            updateQuizProgress();
+        }
+
+        function completeQuiz() {
+            const answersArray = [];
+            for (let i = 0; i < 45; i++) {
+                answersArray.push(quizAnswers[i] || 0);
+            }
+
+            const requestData = {
+                model_type: fusionTarget === 'disease' ? 'disease_tabnet' : 'insect_tabnet',
+                input_type: 'quiz',
+                answers: answersArray,
+                session_id: sessionId
+            };
+
+            showLoading();
+
+            fetch('/predict_quiz', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                hideLoading();
+                if (data.error) {
+                    showError(data.error);
+                } else {
+                    quizResult = data;
+                    updateStepIndicators(3);
+                    showStep(3);
+                }
+            })
+            .catch(error => {
+                hideLoading();
+                showError('Network error: ' + error.message);
+            });
+        }
+
+        function setupFileUpload() {
+            const fileInput = document.getElementById('fusionFileInput');
+            
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    handleFileSelect(file);
+                }
+            });
+        }
+
+        function setupDragDrop() {
+            const uploadArea = document.getElementById('imageUploadArea');
+            
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('dragover');
+            });
+            
+            uploadArea.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+            });
+            
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+                
+                const file = e.dataTransfer.files[0];
+                if (file) {
+                    handleFileSelect(file);
+                }
+            });
+        }
+
+        function handleFileSelect(file) {
+            selectedFile = file;
+            
+            const preview = document.getElementById('filePreview');
+            const previewImage = document.getElementById('previewImage');
+            const fileName = document.getElementById('fileName');
+            
+            fileName.textContent = file.name;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImage.src = e.target.result;
+                preview.classList.add('show');
+            };
+            reader.readAsDataURL(file);
+            
+            document.getElementById('startFusionAnalysis').disabled = false;
+        }
+
+        function startFusionAnalysis() {
+            if (!selectedFile || !quizResult) return;
+
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+            formData.append('model_type', fusionTarget === 'disease' ? 'disease_yolo' : 'insect_yolo');
+            formData.append('input_type', 'image');
+            formData.append('session_id', sessionId);
+
+            showLoading();
+            updateStepIndicators(4);
+            showStep(4);
+
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    hideLoading();
+                    showError(data.error);
+                } else {
+                    imageResult = data;
+                    return fetch('/fusion_analysis', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            session_id: sessionId
+                        })
+                    });
+                }
+            })
+            .then(response => {
+                if (response) {
+                    return response.json();
+                }
+            })
+            .then(fusionData => {
+                hideLoading();
+                if (fusionData && fusionData.error) {
+                    showError(fusionData.error);
+                } else if (fusionData) {
+                    displayFusionResults(fusionData);
+                }
+            })
+            .catch(error => {
+                hideLoading();
+                showError('Network error: ' + error.message);
+            });
+        }
+
+        function displayFusionResults(fusionData) {
+            const quizResult = fusionData.quiz_result;
+            const imageResult = fusionData.image_result;
+            const fusionAnalysis = fusionData.fusion_analysis;
+
+            const quizPrediction = Array.isArray(quizResult.prediction) ? quizResult.prediction[0] : quizResult.prediction;
+            const quizConfidence = fusionAnalysis.quiz_confidence;
+            const imageConfidence = fusionAnalysis.image_confidence;
+            const fusionScore = fusionAnalysis.fusion_score;
+            const detectionCount = fusionAnalysis.detection_count;
+
+            document.getElementById('quizConfidence').textContent = `${(quizConfidence * 100).toFixed(1)}%`;
+            document.getElementById('imageConfidence').textContent = `${(imageConfidence * 100).toFixed(1)}%`;
+            document.getElementById('fusionConfidence').textContent = `${(fusionScore * 100).toFixed(1)}%`;
+            
+            setConfidenceColor('quizConfidence', quizConfidence);
+            setConfidenceColor('imageConfidence', imageConfidence);
+            setConfidenceColor('fusionConfidence', fusionScore);
+            
+            const targetName = fusionTarget === 'disease' ? 'Disease' : 'Pest Problem';
+            const quizResultText = quizPrediction === 1 ? `${targetName} Detected` : `No ${targetName} Detected`;
+            const imageResultText = detectionCount > 0 ? `${detectionCount} Detection(s) Found` : 'No Detections Found';
+            
+            let fusionResultText = '✅ No Issues Detected';
+            let recommendation = 'Your crop looks healthy. Continue regular monitoring.';
+            
+            if (fusionScore > 0.7) {
+                fusionResultText = `⚠️ High Risk: ${targetName} Likely Present`;
+                recommendation = `Immediate action recommended. Consult agricultural expert or apply appropriate treatment.`;
+            } else if (fusionScore > 0.4) {
+                fusionResultText = `⚡ Moderate Risk: Possible ${targetName}`;
+                recommendation = `Monitor closely and consider preventive measures. Early intervention may be needed.`;
+            }
+            
+            document.getElementById('quizResult').textContent = quizResultText;
+            document.getElementById('imageResult').textContent = imageResultText;
+            document.getElementById('fusionResult').textContent = fusionResultText;
+            
+            const detailedResults = document.getElementById('detailedResults');
+            detailedResults.innerHTML = `
+                <div style="background: rgba(255,255,255,0.9); padding: 25px; border-radius: 15px; margin-top: 20px; border-left: 5px solid #4CAF50;">
+                    <h4 style="color: #1B5E20; margin-bottom: 15px;">🎯 Recommendation:</h4>
+                    <p style="font-size: 1.1em; line-height: 1.6; color: #333;">${recommendation}</p>
+                    <div style="margin-top: 15px; padding: 15px; background: rgba(248,255,248,0.8); border-radius: 10px;">
+                        <strong>Analysis Summary:</strong><br>
+                        • Quiz Assessment: ${(quizConfidence * 100).toFixed(1)}% confidence<br>
+                        • Image Analysis: ${detectionCount} detections with ${(imageConfidence * 100).toFixed(1)}% confidence<br>
+                        • Combined AI Score: ${(fusionScore * 100).toFixed(1)}% risk level
+                    </div>
+                </div>
+            `;
+        }
+
+        function setConfidenceColor(elementId, confidence) {
+            const element = document.getElementById(elementId);
+            element.className = 'confidence-score';
+            
+            if (confidence > 0.7) {
+                element.classList.add('high');
+            } else if (confidence > 0.4) {
+                element.classList.add('medium');
+            } else {
+                element.classList.add('low');
+            }
+        }
+
+        function updateStepIndicators(activeStep) {
+            currentStep = activeStep;
+            
+            for (let i = 1; i <= 4; i++) {
+                const indicator = document.getElementById(`step${i}-indicator`);
+                indicator.className = 'step-indicator';
+                
+                if (i < activeStep) {
+                    indicator.classList.add('completed');
+                } else if (i === activeStep) {
+                    indicator.classList.add('active');
+                } else {
+                    indicator.classList.add('pending');
+                }
+            }
+        }
+
+        function showStep(stepNumber) {
+            document.querySelectorAll('.step-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            document.getElementById(`step${stepNumber}-content`).classList.add('active');
+        }
+
+        function goBackToTarget() {
+            updateStepIndicators(1);
+            showStep(1);
+        }
+
+        function goBackToQuiz() {
+            updateStepIndicators(2);
+            showStep(2);
+        }
+
+        function startNewAnalysis() {
+            if (sessionId) {
+                fetch(`/clear_session/${sessionId}`)
+                    .catch(error => console.log('Session clear error:', error));
+            }
+            
+            sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            
+            fusionTarget = null;
+            quizAnswers = {};
+            selectedFile = null;
+            quizResult = null;
+            imageResult = null;
+            
+            document.querySelectorAll('.pipeline-card').forEach(c => c.classList.remove('selected'));
+            document.getElementById('proceedToQuiz').disabled = true;
+            document.getElementById('completeQuiz').disabled = true;
+            document.getElementById('startFusionAnalysis').disabled = true;
+            document.getElementById('filePreview').classList.remove('show');
+            
+            updateStepIndicators(1);
+            showStep(1);
+        }
+
+        function downloadResults() {
+            const report = {
+                timestamp: new Date().toLocaleString(),
+                session_id: sessionId,
+                detection_target: fusionTarget === 'disease' ? 'Disease Detection' : 'Pest Detection',
+                simple_quiz_format: '45 farmer-friendly questions with visual illustrations',
+                quiz_result: {
+                    confidence: document.getElementById('quizConfidence').textContent,
+                    result: document.getElementById('quizResult').textContent
+                },
+                image_result: {
+                    confidence: document.getElementById('imageConfidence').textContent,
+                    result: document.getElementById('imageResult').textContent
+                },
+                smart_ai_fusion: {
+                    overall_score: document.getElementById('fusionConfidence').textContent,
+                    final_assessment: document.getElementById('fusionResult').textContent
+                }
+            };
+            
+            const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `simple_sugarcane_analysis_${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        console.log('Simple Sugarcane AI - 45 Questions System with Visual Illustrations Initialized');
+    </script>
 </body>
 </html>

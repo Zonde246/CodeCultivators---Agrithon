@@ -30,189 +30,83 @@ yolo_insect_model = None   # YOLOv8s model
 tabnet_disease_model = None
 tabnet_insect_model = None
 
-# YOLO class names (updated for sugarcane)
+# YOLO class names (you may need to update these based on your specific models)
 DISEASE_CLASSES = [
-    'Dead_Heart'
+    'healthy', 'bacterial_blight', 'brown_spot', 'leaf_blast', 
+    'tungro', 'hispa', 'downy_mildew', 'bacterial_leaf_streak'
 ]
 
 INSECT_CLASSES = [
-    'early_shoot_borer', 'top_borer', 'root_borer', 'scale_insect', 
-    'aphid', 'termite', 'white_fly', 'mealy_bug'
+    'armyworm', 'beetle', 'bollworm', 'grasshopper', 
+    'mites', 'sawfly', 'stem_borer', 'thrips'
 ]
 
-# Simplified 45-question sets for sugarcane detection
-# Dead Heart / Early Shoot Borer Questions (45 simple questions)
-SIMPLE_DEAD_HEART_QUESTIONS = [
-    # Basic Plant Status (9 questions)
-    "Are your plants young (1-3 months old)?",
-    "Is it rainy season?",
-    "Were your plants growing well before?",
-    "Are new shoots still coming out?",
-    "Are the plant shoots tender and soft?",
-    "Is your field in good condition?",
-    "Do your plants have proper spacing?",
-    "Do most plants look healthy?",
-    "Is growth normal compared to other fields?",
-    
-    # Main Shoot Problems (12 questions)
-    "Is the center shoot of plants dead?",
-    "Has the center dried up completely?",
-    "Can you pull out the dead center easily?",
-    "Has the main shoot turned brown?",
-    "Has the center stopped growing?",
-    "Does the heart of the plant look dead?",
-    "Have new leaves stopped coming?",
-    "Is the top part of plants dying?",
-    "Do affected plants look withered?",
-    "Is the center turning yellow then brown?",
-    "Do affected plants look sick?",
-    "Can you see dead hearts from far away?",
-    
-    # Holes and Damage Signs (9 questions)
-    "Do you see small holes in plant stems?",
-    "Are there holes near the base of plants?",
-    "Are the holes small and round?",
-    "Is there sawdust-like material around holes?",
-    "Are there several holes in one plant?",
-    "Do the holes look fresh and new?",
-    "Do holes seem to go deep inside?",
-    "Do holes have wet or dark edges?",
-    "Are stems hollow when you cut them?",
-    
-    # Insect Evidence (6 questions)
-    "Have you seen small brown moths?",
-    "Do you see moths in the evening?",
-    "Have you seen white egg clusters?",
-    "Have you found small white caterpillars?",
-    "Are caterpillars found inside stems?",
-    "Do you see insect droppings around?",
-    
-    # Field Impact (9 questions)
-    "Are many plants affected in your field?",
-    "Is the damage spreading to more plants?",
-    "Does your field look bad now?",
-    "Are you worried about your harvest?",
-    "Are plants dying in patches?",
-    "Does your field look uneven now?",
-    "Do you think you need to replant some areas?",
-    "Does your crop look weak overall?",
-    "Do you think harvest will be less?"
+# Quiz questions for reference (these match the frontend)
+ARMYWORM_QUESTIONS = [
+    "Is the pest in the image an armyworm?",
+    "Is the armyworm green in color?",
+    "Is the armyworm brown in color?",
+    "Is the armyworm found on the leaf top?",
+    "Is the armyworm found on the underside of the leaf?",
+    "Is the armyworm present on the stem?",
+    "Is the armyworm feeding on the crop?",
+    "Are visible bite marks present on the leaf?",
+    "Are there multiple armyworms in the image?",
+    "Is any frass (armyworm waste) visible near the pest?",
+    "Are eggs visible near the armyworm?",
+    "Are larvae of the armyworm visible?",
+    "Has the crop been attacked by armyworm in previous seasons?",
+    "Was pesticide recently applied to this crop area?",
+    "Is the armyworm population increasing?",
+    "Is the armyworm active during daylight hours?",
+    "Is the armyworm mostly active during night?",
+    "Is the leaf portion of the plant affected?",
+    "Is the stem portion of the plant affected?",
+    "Is the damage restricted to a small part of the crop?",
+    "Are nearby plants also showing signs of armyworm infestation?",
+    "Is the armyworm moving actively?",
+    "Are there signs of curled leaves due to feeding?",
+    "Has the armyworm damaged more than one section of the same plant?",
+    "Is there visible discoloration of the crop due to pest feeding?",
+    "Does the armyworm show striping or lines on its body?",
+    "Is the length of the armyworm greater than 20 mm?",
+    "Are any dead armyworms seen in the area (possibly due to pesticide)?",
+    "Is any chewing sound audible during the inspection?",
+    "Has any farmer nearby reported armyworm infestation in the last week?"
 ]
 
-# Tiller Damage Questions (45 simple questions)
-SIMPLE_TILLER_QUESTIONS = [
-    # Basic Plant Status (9 questions)
-    "Are side shoots growing from your plants?",
-    "Are your plants young (2-4 months old)?",
-    "Do plants have many side shoots?",
-    "Do side shoots look healthy?",
-    "Are side shoots growing fast?",
-    "Is tillering happening well?",
-    "Do you have thick plant stand?",
-    "Are the side shoots tender?",
-    "Is plant development normal?",
-    
-    # Side Shoot Problems (12 questions)
-    "Are side shoots dying?",
-    "Are shoot tips turning brown?",
-    "Do side shoots break easily?",
-    "Are there fewer side shoots now?",
-    "Are side shoots turning yellow?",
-    "Do side shoots look wilted?",
-    "Are there dead side shoots?",
-    "Are side shoots not growing well?",
-    "Are side shoots falling over?",
-    "Do side shoots look weak?",
-    "Is growth uneven across field?",
-    "Is damage spreading to more shoots?",
-    
-    # Holes and Damage (9 questions)
-    "Do you see holes in side shoots?",
-    "Are there holes where shoots join main plant?",
-    "Is there sawdust around holes?",
-    "Are shoots hollow inside when cut?",
-    "Are holes small and round?",
-    "Are there many holes in same shoot?",
-    "Does damage look fresh?",
-    "Can you see tunnels inside shoots?",
-    "Are shoot joints damaged?",
-    
-    # Insect Signs (6 questions)
-    "Have you seen moths around plants?",
-    "Do moths come out in evening?",
-    "Have you seen white eggs on leaves?",
-    "Have you found small white worms?",
-    "Are worms inside the shoots?",
-    "Do you see signs of insects feeding?",
-    
-    # Field Impact (9 questions)
-    "Does your field look uneven?",
-    "Are gaps appearing in your field?",
-    "Is plant stand becoming poor?",
-    "Are you concerned about yield?",
-    "Does field look patchy?",
-    "Do plants look weak overall?",
-    "Do you need to fill gaps?",
-    "Are you worried about harvest?",
-    "Will you get fewer canes?"
+DISEASE_QUESTIONS = [
+    "Is there a yellow halo around the spots?",
+    "Are the leaf spots circular with concentric rings?",
+    "Does the disease begin on the lower leaves?",
+    "Are the lesions expanding over time?",
+    "Is the center of the spot dry and brown?",
+    "Are multiple spots merging to form large blotches?",
+    "Does the leaf show signs of early yellowing?",
+    "Are stems or fruits also affected?",
+    "Are the affected leaves wilting?",
+    "Is the infection spreading upward on the plant?",
+    "Are concentric rings visible clearly on the leaves?",
+    "Is there any rotting seen on fruit?",
+    "Are the leaf margins turning brown?",
+    "Is the plant under moisture stress?",
+    "Is the disease more active during rainy days?",
+    "Are nearby tomato plants also showing similar symptoms?",
+    "Is there any black moldy growth on the lesion?",
+    "Does the disease affect the whole plant?",
+    "Is the spot size more than 5mm in diameter?",
+    "Are the lesions visible on both sides of the leaf?",
+    "Is the infection found only on mature leaves?",
+    "Are the leaf veins visible through the lesion?",
+    "Is the damage uniform across the field?",
+    "Was there previous history of Early Blight in this field?",
+    "Is the farmer using resistant tomato varieties?",
+    "Was any fungicide recently applied?",
+    "Was there poor air circulation in the field?",
+    "Was the field irrigated from overhead sprinklers?",
+    "Are pruning and sanitation practices followed?",
+    "Is there any other crop in the field showing similar spots?"
 ]
-
-# Simple Disease Questions (45 questions)
-SIMPLE_DISEASE_QUESTIONS = [
-    # Leaf Symptoms (15 questions)
-    "Are there red streaks on the leaves?",
-    "Do you see orange spots on leaf undersides?",
-    "Are there yellow lines on leaves?",
-    "Do leaves have brown water spots?",
-    "Are there round spots with red edges?",
-    "Is there white powder on leaves?",
-    "Are leaves turning yellow from tips?",
-    "Do you see dark streaks on leaves?",
-    "Are there light and dark patches on leaves?",
-    "Are leaves yellowing too early?",
-    "Are there dead patches on leaves?",
-    "Do leaves look silvery or bronze?",
-    "Are leaf edges brown and dry?",
-    "Are there small brown spots on leaves?",
-    "Are there yellow rings around leaf spots?",
-    
-    # Stem Problems (15 questions)
-    "Is the inside of stems red or brown?",
-    "Are there black growths coming from plants?",
-    "Are there dark lines on the stem?",
-    "Are the joints brown or red?",
-    "Is the stem cracking or splitting?",
-    "Are stems hollow inside?",
-    "Are there sunken dark spots on stems?",
-    "Are the spaces between joints too short or long?",
-    "Is there white fuzzy growth on stems?",
-    "Is sticky stuff coming out of stems?",
-    "Are there dead sunken areas on stems?",
-    "Do stems smell bad when cut?",
-    "Is the inside white part discolored?",
-    "Are the joints swollen or bigger?",
-    "Can you see where disease entered stems?",
-    
-    # Plant and Field Impact (15 questions)
-    "Are roots black or brown?",
-    "Are underground parts rotting?",
-    "Are plants shorter than normal?",
-    "Do plants look weak and tired?",
-    "Are plants making fewer side shoots?",
-    "Are young plants flowering too early?",
-    "Are the canes thinner than normal?",
-    "Are plants wilting even with water?",
-    "Are plants dying in groups?",
-    "Has there been too much rain lately?",
-    "Are problems worse in wet areas?",
-    "Are symptoms worse when humid?",
-    "Is disease spreading from sick plants?",
-    "Are problems worse in crowded areas?",
-    "Do nearby fields have same problems?"
-]
-
-# In-memory storage for fusion analysis sessions
-fusion_sessions = {}
 
 class ModelLoader:
     @staticmethod
@@ -264,28 +158,28 @@ def load_all_models():
     global yolo_disease_model, yolo_insect_model, tabnet_disease_model, tabnet_insect_model
     
     # Load YOLO models
-    if os.path.exists('deadBest.pt'):
-        yolo_disease_model = ModelLoader.load_yolo_model('deadBest.pt')
-        print("Sugarcane Disease YOLO model (YOLOv8s-seg) loaded successfully")
+    if os.path.exists('diseaseBest.pt'):
+        yolo_disease_model = ModelLoader.load_yolo_model('diseaseBest.pt')
+        print("Disease YOLO model (YOLOv8s-seg) loaded successfully")
     
-    if os.path.exists('tillerBest.pt'):
-        yolo_insect_model = ModelLoader.load_yolo_model('tillerBest.pt')
-        print("Sugarcane Pest YOLO model (YOLOv8s) loaded successfully")
+    if os.path.exists('insectsBest.pt'):
+        yolo_insect_model = ModelLoader.load_yolo_model('insectsBest.pt')
+        print("Insect YOLO model (YOLOv8s) loaded successfully")
     
-    # Load simplified TabNet models (45 questions)
-    if os.path.exists('DeadNewTabBest.zip'):
-        tabnet_disease_model = ModelLoader.load_tabnet_model('DeadNewTabBest.zip')
+    # Load TabNet models
+    if os.path.exists('tabnet_disease_model.zip'):
+        tabnet_disease_model = ModelLoader.load_tabnet_model('tabnet_disease_model.zip')
         if tabnet_disease_model is not None:
-            print("Simple Disease TabNet model (45Q) loaded successfully")
+            print("Disease TabNet model loaded successfully")
         else:
-            print("Failed to load Simple Disease TabNet model")
+            print("Failed to load Disease TabNet model")
     
-    if os.path.exists('TillerNewTabBest.zip'):
-        tabnet_insect_model = ModelLoader.load_tabnet_model('TillerNewTabBest.zip')
+    if os.path.exists('tabnet_armyworm_detector.zip'):
+        tabnet_insect_model = ModelLoader.load_tabnet_model('tabnet_armyworm_detector.zip')
         if tabnet_insect_model is not None:
-            print("Simple Dead Heart TabNet model (45Q) loaded successfully")
+            print("Insect TabNet model loaded successfully")
         else:
-            print("Failed to load Simple Dead Heart TabNet model")
+            print("Failed to load Insect TabNet model")
 
 def allowed_file(filename):
     """Check if file extension is allowed"""
@@ -417,36 +311,35 @@ def predict_yolo_image(model, image, class_names, is_segmentation=False):
         return None, None, None
 
 def predict_tabnet_quiz(model, answers):
-    """Make prediction using TabNet model on quiz answers (45 questions)"""
+    """Make prediction using TabNet model on quiz answers"""
     try:
         print(f"TabNet quiz prediction input: {answers}")
         print(f"TabNet model type: {type(model)}")
-        print(f"Number of answers received: {len(answers)}")
         
-        # Ensure exactly 45 answers
-        if len(answers) != 45:
-            raise ValueError(f"Expected exactly 45 answers, got {len(answers)}.")
-        
-        # Convert to 2D NumPy array: shape (1, 45)
-        data_array = np.array(answers, dtype=np.float32).reshape(1, -1)
+        # Convert answers list to numpy array with correct shape
+        data_array = np.array(answers, dtype=np.float32).reshape(1, -1)  # Shape: (1, 30)
         
         print(f"Data array shape for prediction: {data_array.shape}")
         print(f"Data array dtype: {data_array.dtype}")
         
-        # Predict directly on all features
+        # Ensure exactly 30 features
+        if data_array.shape[1] != 30:
+            raise ValueError(f"Expected 30 features, got {data_array.shape[1]} features.")
+        
+        # Make prediction using TabNet model
         prediction = model.predict(data_array)
         print(f"Prediction result: {prediction}")
         print(f"Prediction shape: {prediction.shape}")
         
-        # Optionally get prediction probabilities
+        # Try to get prediction probabilities if available
         probabilities = None
-        if hasattr(model, 'predict_proba'):
-            try:
+        try:
+            if hasattr(model, 'predict_proba'):
                 probabilities = model.predict_proba(data_array)
                 print(f"Probabilities shape: {probabilities.shape}")
                 print(f"Probabilities: {probabilities}")
-            except Exception as e:
-                print(f"Could not get probabilities: {e}")
+        except Exception as e:
+            print(f"Could not get probabilities: {e}")
         
         return prediction, probabilities
         
@@ -455,7 +348,6 @@ def predict_tabnet_quiz(model, answers):
         import traceback
         traceback.print_exc()
         return None, None
-
 
 def predict_tabnet_data(model, data):
     """Make prediction using TabNet model on structured data (for CSV uploads)"""
@@ -474,14 +366,14 @@ def predict_tabnet_data(model, data):
         print(f"Data array shape for prediction: {data_array.shape}")
         print(f"Data array dtype: {data_array.dtype}")
         
-        # Final safety check - ensure exactly 45 features
-        if data_array.shape[1] != 45:
-            if data_array.shape[1] > 45:
-                print(f"Warning: Truncating from {data_array.shape[1]} to 45 features")
-                data_array = data_array[:, :45]
+        # Final safety check - ensure exactly 30 features
+        if data_array.shape[1] != 30:
+            if data_array.shape[1] > 30:
+                print(f"Warning: Truncating from {data_array.shape[1]} to 30 features")
+                data_array = data_array[:, :30]
             else:
-                raise ValueError(f"Expected 45 features, got {data_array.shape[1]} features. "
-                               f"Please ensure your data has exactly 45 feature columns (Q1-Q45).")
+                raise ValueError(f"Expected 30 features, got {data_array.shape[1]} features. "
+                               f"Please ensure your data has exactly 30 feature columns (Q1-Q30).")
         
         print(f"Final data array shape: {data_array.shape}")
         
@@ -507,56 +399,6 @@ def predict_tabnet_data(model, data):
         traceback.print_exc()
         return None, None
 
-def calculate_fusion_score(quiz_result, image_result, fusion_weights=None):
-    """Calculate AI fusion score from quiz and image results"""
-    if fusion_weights is None:
-        fusion_weights = {'quiz': 0.6, 'image': 0.4}  # Default weights
-    
-    try:
-        # Extract quiz confidence
-        quiz_prediction = quiz_result.get('prediction', [0])
-        if isinstance(quiz_prediction, list):
-            quiz_prediction = quiz_prediction[0]
-        
-        quiz_probs = quiz_result.get('probabilities', [[1-quiz_prediction, quiz_prediction]])
-        if isinstance(quiz_probs[0], list):
-            quiz_probs = quiz_probs[0]
-        quiz_confidence = max(quiz_probs) if quiz_probs else 0.5
-        
-        # Extract image confidence  
-        image_confidence = image_result.get('avg_confidence', 0)
-        detection_count = image_result.get('detection_count', 0)
-        
-        # Adjust image confidence based on detection count
-        if detection_count > 0:
-            # If detections found, use the confidence as-is
-            adjusted_image_confidence = image_confidence
-        else:
-            # If no detections, treat as high confidence for "negative" result
-            adjusted_image_confidence = 0.8
-        
-        # Calculate weighted fusion score
-        fusion_score = (quiz_confidence * fusion_weights['quiz'] + 
-                       adjusted_image_confidence * fusion_weights['image'])
-        
-        return {
-            'quiz_confidence': quiz_confidence,
-            'image_confidence': adjusted_image_confidence,
-            'fusion_score': fusion_score,
-            'quiz_prediction': quiz_prediction,
-            'detection_count': detection_count,
-            'weights_used': fusion_weights
-        }
-        
-    except Exception as e:
-        print(f"Error calculating fusion score: {e}")
-        return {
-            'quiz_confidence': 0.5,
-            'image_confidence': 0.5,
-            'fusion_score': 0.5,
-            'error': str(e)
-        }
-
 @app.route('/')
 def index():
     """Main page with all options"""
@@ -564,7 +406,7 @@ def index():
 
 @app.route('/predict_quiz', methods=['POST'])
 def predict_quiz():
-    """Handle quiz-based predictions (45 questions only)"""
+    """Handle quiz-based predictions"""
     try:
         data = request.get_json()
         
@@ -574,14 +416,12 @@ def predict_quiz():
         model_type = data.get('model_type')
         input_type = data.get('input_type')
         answers = data.get('answers')
-        session_id = data.get('session_id')  # For fusion pipeline tracking
         
         if not model_type or input_type != 'quiz' or not answers:
             return jsonify({'error': 'Invalid request data'}), 400
         
-        # Validate answer count - now only 45 questions
-        if len(answers) != 45:
-            return jsonify({'error': f'Expected exactly 45 answers, got {len(answers)}'}), 400
+        if len(answers) != 30:
+            return jsonify({'error': f'Expected 30 answers, got {len(answers)}'}), 400
         
         # Validate answers are binary (0 or 1)
         if not all(answer in [0, 1] for answer in answers):
@@ -590,11 +430,11 @@ def predict_quiz():
         # Select appropriate model
         if model_type == 'disease_tabnet':
             if tabnet_disease_model is None:
-                return jsonify({'error': 'Simple Disease TabNet model not loaded'}), 500
+                return jsonify({'error': 'Disease TabNet model not loaded'}), 500
             prediction, probabilities = predict_tabnet_quiz(tabnet_disease_model, answers)
         elif model_type == 'insect_tabnet':
             if tabnet_insect_model is None:
-                return jsonify({'error': 'Simple Dead Heart TabNet model not loaded'}), 500
+                return jsonify({'error': 'Insect TabNet model not loaded'}), 500
             prediction, probabilities = predict_tabnet_quiz(tabnet_insect_model, answers)
         else:
             return jsonify({'error': 'Invalid model type for quiz input'}), 400
@@ -604,17 +444,10 @@ def predict_quiz():
                 'prediction': prediction.tolist() if hasattr(prediction, 'tolist') else prediction,
                 'model_used': model_type,
                 'input_type': 'quiz',
-                'num_questions_answered': len(answers),
-                'question_format': 'simple_45_questions'
+                'num_questions_answered': len(answers)
             }
             if probabilities is not None:
                 result['probabilities'] = probabilities.tolist() if hasattr(probabilities, 'tolist') else probabilities
-            
-            # Store in fusion session if session_id provided
-            if session_id:
-                if session_id not in fusion_sessions:
-                    fusion_sessions[session_id] = {}
-                fusion_sessions[session_id]['quiz_result'] = result
             
             return jsonify(result)
         else:
@@ -632,7 +465,6 @@ def predict():
     try:
         model_type = request.form.get('model_type')
         input_type = request.form.get('input_type')
-        session_id = request.form.get('session_id')  # For fusion pipeline tracking
         
         if not model_type or not input_type:
             return jsonify({'error': 'Model type and input type are required'}), 400
@@ -657,33 +489,25 @@ def predict():
             # Select appropriate model
             if model_type == 'disease_yolo':
                 if yolo_disease_model is None:
-                    return jsonify({'error': 'Sugarcane Disease YOLO model not loaded'}), 500
+                    return jsonify({'error': 'Disease YOLO model not loaded'}), 500
                 predictions, confidences, result_image = predict_yolo_image(
                     yolo_disease_model, image, DISEASE_CLASSES, is_segmentation=True)
             elif model_type == 'insect_yolo':
                 if yolo_insect_model is None:
-                    return jsonify({'error': 'Early Shoot Borer YOLO model not loaded'}), 500
+                    return jsonify({'error': 'Insect YOLO model not loaded'}), 500
                 predictions, confidences, result_image = predict_yolo_image(
                     yolo_insect_model, image, INSECT_CLASSES, is_segmentation=False)
             else:
                 return jsonify({'error': 'Invalid model type for image input'}), 400
             
             if predictions is not None:
-                result = {
+                return jsonify({
                     'predictions': predictions,
                     'avg_confidence': float(np.mean(confidences)) if confidences else 0.0,
                     'detection_count': len(predictions),
                     'result_image': result_image,
                     'model_used': model_type
-                }
-                
-                # Store in fusion session if session_id provided
-                if session_id:
-                    if session_id not in fusion_sessions:
-                        fusion_sessions[session_id] = {}
-                    fusion_sessions[session_id]['image_result'] = result
-                
-                return jsonify(result)
+                })
             else:
                 return jsonify({'error': 'Prediction failed'}), 500
         
@@ -712,7 +536,7 @@ def predict():
             except Exception as e:
                 return jsonify({'error': f'Error reading data file: {str(e)}'}), 400
             
-            # Basic data preprocessing for 45-feature format
+            # Basic data preprocessing
             try:
                 print(f"Original data shape: {data.shape}")
                 print(f"Original columns: {list(data.columns)}")
@@ -720,24 +544,24 @@ def predict():
                 # Remove any unnamed columns
                 data = data.loc[:, ~data.columns.str.contains('^Unnamed')]
                 
-                # Remove target column if present
-                target_columns = ['Target', 'target', 'label', 'Label', 'y', 'class', 'Class', 'true_infestation']
+                # Remove target column if present (common names: 'Target', 'target', 'label', 'Label', 'y')
+                target_columns = ['Target', 'target', 'label', 'Label', 'y', 'class', 'Class']
                 for col in target_columns:
                     if col in data.columns:
                         print(f"Removing target column: {col}")
                         data = data.drop(columns=[col])
                 
-                # If we have more than 45 columns, keep only Q1-Q45
-                if len(data.columns) > 45:
-                    q_columns = [f'Q{i}' for i in range(1, 46)]
+                # If we still have more than 30 columns, keep only Q1-Q30
+                if len(data.columns) > 30:
+                    q_columns = [f'Q{i}' for i in range(1, 31)]
                     available_q_columns = [col for col in q_columns if col in data.columns]
-                    if len(available_q_columns) == 45:
-                        print("Using Q1-Q45 columns for prediction")
+                    if len(available_q_columns) == 30:
+                        print("Using Q1-Q30 columns for prediction")
                         data = data[available_q_columns]
                     else:
-                        # If Q columns don't exist, use first 45 columns
-                        print(f"Q1-Q45 columns not found, using first 45 columns")
-                        data = data.iloc[:, :45]
+                        # If Q columns don't exist, use first 30 columns
+                        print(f"Q1-Q30 columns not found, using first 30 columns")
+                        data = data.iloc[:, :30]
                 
                 print(f"Data shape after column selection: {data.shape}")
                 print(f"Final columns: {list(data.columns)}")
@@ -772,42 +596,42 @@ def predict():
                         data[col] = le.fit_transform(data[col].astype(str))
                         label_encoders[col] = le
                 
-                # Ensure we have exactly 45 features for TabNet
-                if data.shape[1] != 45:
-                    if data.shape[1] < 45:
-                        # Pad with zeros if we have fewer than 45 features
-                        missing_cols = 45 - data.shape[1]
+                # Ensure we have exactly 30 features for TabNet
+                if data.shape[1] != 30:
+                    if data.shape[1] < 30:
+                        # Pad with zeros if we have fewer than 30 features
+                        missing_cols = 30 - data.shape[1]
                         for i in range(missing_cols):
                             data[f'feature_{data.shape[1] + i + 1}'] = 0
                         print(f"Padded data with {missing_cols} zero columns")
                     else:
-                        # Truncate if we have more than 45 features
-                        data = data.iloc[:, :45]
-                        print(f"Truncated data to 45 features")
+                        # Truncate if we have more than 30 features
+                        data = data.iloc[:, :30]
+                        print(f"Truncated data to 30 features")
                 
                 print(f"Final preprocessed data shape: {data.shape}")
                 print(f"Data types:\n{data.dtypes}")
                 
-                # Verify we have exactly 45 columns
-                if data.shape[1] != 45:
-                    raise ValueError(f"Expected 45 features, got {data.shape[1]} features")
+                # Verify we have exactly 30 columns
+                if data.shape[1] != 30:
+                    raise ValueError(f"Expected 30 features, got {data.shape[1]} features")
                 
             except Exception as e:
                 print(f"Warning: Data preprocessing failed: {e}")
                 # If preprocessing fails, try to use the data as-is but remove target column
                 if 'Target' in data.columns:
                     data = data.drop(columns=['Target'])
-                if data.shape[1] > 45:
-                    data = data.iloc[:, :45]
+                if data.shape[1] > 30:
+                    data = data.iloc[:, :30]
             
             # Select appropriate model
             if model_type == 'disease_tabnet':
                 if tabnet_disease_model is None:
-                    return jsonify({'error': 'Simple Disease TabNet model not loaded'}), 500
+                    return jsonify({'error': 'Disease TabNet model not loaded'}), 500
                 prediction, probabilities = predict_tabnet_data(tabnet_disease_model, data)
             elif model_type == 'insect_tabnet':
                 if tabnet_insect_model is None:
-                    return jsonify({'error': 'Simple Dead Heart TabNet model not loaded'}), 500
+                    return jsonify({'error': 'Insect TabNet model not loaded'}), 500
                 prediction, probabilities = predict_tabnet_data(tabnet_insect_model, data)
             else:
                 return jsonify({'error': 'Invalid model type for data input'}), 400
@@ -818,8 +642,7 @@ def predict():
                     'model_used': model_type,
                     'data_shape': data.shape,
                     'num_samples': len(data),
-                    'input_type': 'data',
-                    'question_format': 'simple_45_questions'
+                    'input_type': 'data'
                 }
                 if probabilities is not None:
                     result['probabilities'] = probabilities.tolist() if hasattr(probabilities, 'tolist') else probabilities
@@ -834,41 +657,6 @@ def predict():
     except Exception as e:
         return jsonify({'error': f'Unexpected error: {str(e)}'}), 500
 
-@app.route('/fusion_analysis', methods=['POST'])
-def fusion_analysis():
-    """Calculate fusion analysis from quiz and image results"""
-    try:
-        data = request.get_json()
-        session_id = data.get('session_id')
-        
-        if not session_id or session_id not in fusion_sessions:
-            return jsonify({'error': 'Invalid or missing session ID'}), 400
-        
-        session_data = fusion_sessions[session_id]
-        
-        if 'quiz_result' not in session_data or 'image_result' not in session_data:
-            return jsonify({'error': 'Both quiz and image results required for fusion analysis'}), 400
-        
-        quiz_result = session_data['quiz_result']
-        image_result = session_data['image_result']
-        
-        # Calculate fusion score
-        fusion_result = calculate_fusion_score(quiz_result, image_result)
-        
-        # Store fusion result in session
-        session_data['fusion_result'] = fusion_result
-        
-        return jsonify({
-            'quiz_result': quiz_result,
-            'image_result': image_result,
-            'fusion_analysis': fusion_result,
-            'session_id': session_id
-        })
-        
-    except Exception as e:
-        print(f"Error in fusion analysis: {e}")
-        return jsonify({'error': f'Fusion analysis failed: {str(e)}'}), 500
-
 @app.route('/model_status')
 def model_status():
     """Check which models are loaded"""
@@ -882,13 +670,10 @@ def model_status():
 
 @app.route('/quiz_questions')
 def get_quiz_questions():
-    """Get simplified 45-question sets for frontend"""
+    """Get quiz questions for frontend"""
     return jsonify({
-        'dead_heart_questions': SIMPLE_DEAD_HEART_QUESTIONS,
-        'tiller_questions': SIMPLE_TILLER_QUESTIONS,
-        'disease_questions': SIMPLE_DISEASE_QUESTIONS,
-        'question_count': 45,
-        'question_format': 'simple_farmer_friendly'
+        'armyworm_questions': ARMYWORM_QUESTIONS,
+        'disease_questions': DISEASE_QUESTIONS
     })
 
 @app.route('/class_names')
@@ -907,9 +692,7 @@ def debug_tabnet():
         'insect_model_loaded': tabnet_insect_model is not None,
         'disease_model_type': str(type(tabnet_disease_model)) if tabnet_disease_model else None,
         'insect_model_type': str(type(tabnet_insect_model)) if tabnet_insect_model else None,
-        'pytorch_tabnet_available': False,
-        'expected_features': 45,
-        'question_format': 'simple_farmer_friendly'
+        'pytorch_tabnet_available': False
     }
     
     # Check if pytorch-tabnet is available
@@ -933,22 +716,20 @@ def debug_tabnet():
 
 @app.route('/test_quiz')
 def test_quiz():
-    """Test endpoint for quiz functionality with 45 questions"""
-    # Test data: all "Yes" answers for early shoot borer detection (45 questions)
-    test_answers = [1] * 45
+    """Test endpoint for quiz functionality"""
+    # Test data: all "Yes" answers for armyworm detection
+    test_answers = [1] * 30
     
     if tabnet_insect_model is None:
-        return jsonify({'error': 'Simple Dead Heart TabNet model not loaded'})
+        return jsonify({'error': 'Insect TabNet model not loaded'})
     
     try:
         prediction, probabilities = predict_tabnet_quiz(tabnet_insect_model, test_answers)
         
         result = {
             'test_input': test_answers,
-            'test_input_length': len(test_answers),
             'prediction': prediction.tolist() if hasattr(prediction, 'tolist') else prediction,
-            'success': True,
-            'question_format': 'simple_45_questions'
+            'success': True
         }
         
         if probabilities is not None:
@@ -959,43 +740,13 @@ def test_quiz():
     except Exception as e:
         return jsonify({
             'error': str(e),
-            'success': False,
-            'test_input_length': len(test_answers)
+            'success': False
         })
-
-@app.route('/clear_session/<session_id>')
-def clear_session(session_id):
-    """Clear a specific fusion session"""
-    if session_id in fusion_sessions:
-        del fusion_sessions[session_id]
-        return jsonify({'message': f'Session {session_id} cleared successfully'})
-    else:
-        return jsonify({'error': 'Session not found'}), 404
-
-@app.route('/list_sessions')
-def list_sessions():
-    """List all active fusion sessions"""
-    sessions = {}
-    for session_id, session_data in fusion_sessions.items():
-        sessions[session_id] = {
-            'has_quiz_result': 'quiz_result' in session_data,
-            'has_image_result': 'image_result' in session_data,
-            'has_fusion_result': 'fusion_result' in session_data
-        }
-    return jsonify(sessions)
 
 if __name__ == '__main__':
     # Load models at startup
-    print("Loading sugarcane detection models...")
-    print("=" * 60)
-    print("SIMPLIFIED 45-QUESTION SUGARCANE AI SYSTEM")
-    print("=" * 60)
     print("Loading models...")
     load_all_models()
-    print("=" * 60)
-    print("Ready for farmer-friendly 45-question assessments!")
-    print("Question format: Simple, observable, practical")
-    print("=" * 60)
     
     # Start Flask app
     app.run(debug=True, host='0.0.0.0', port=5000)

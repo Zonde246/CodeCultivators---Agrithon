@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multimodal Disease & Insect Detection System</title>
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔬 AI Crop Diagnostic System</h1>
+            <p>Multi-Modal Disease & Insect Detection Platform</p>
+        </div>
+        
+        <div class="content">
+            <div class="model-selector">
+                <h2>Select Detection Method & Input Type</h2>
+                <div class="model-grid">
+                    <div class="model-card" data-model="disease_yolo" data-input="image">
+                        <div class="input-type-badge">IMAGE</div>
+                        <h3>🦠 Disease Detection</h3>
+                        <p>Upload plant images for AI-powered disease detection using YOLOv8 segmentation</p>
+                        <div class="status">
+                            <span class="status-indicator status-not-loaded" id="status-disease-yolo"></span>
+                            <span>Model Status</span>
+                        </div>
+                    </div>
+                    
+                    <div class="model-card" data-model="insect_yolo" data-input="image">
+                        <div class="input-type-badge">IMAGE</div>
+                        <h3>🐛 Insect Detection</h3>
+                        <p>Upload crop images for automated insect and pest identification</p>
+                        <div class="status">
+                            <span class="status-indicator status-not-loaded" id="status-insect-yolo"></span>
+                            <span>Model Status</span>
+                        </div>
+                    </div>
+                    
+                    <div class="model-card" data-model="disease_tabnet" data-input="data">
+                        <div class="input-type-badge">CSV</div>
+                        <h3>📊 Disease Analysis</h3>
+                        <p>Upload CSV data files for structured disease analysis using TabNet</p>
+                        <div class="status">
+                            <span class="status-indicator status-not-loaded" id="status-disease-tabnet"></span>
+                            <span>Model Status</span>
+                        </div>
+                    </div>
+                    
+                    <div class="model-card" data-model="insect_tabnet" data-input="data">
+                        <div class="input-type-badge">CSV</div>
+                        <h3>📈 Insect Analysis</h3>
+                        <p>Upload CSV data files for structured insect detection using TabNet</p>
+                        <div class="status">
+                            <span class="status-indicator status-not-loaded" id="status-insect-tabnet"></span>
+                            <span>Model Status</span>
+                        </div>
+                    </div>
+                    
+                    <div class="model-card" data-model="disease_tabnet" data-input="quiz">
+                        <div class="input-type-badge">QUIZ</div>
+                        <h3>📋 Disease Assessment</h3>
+                        <p>Answer 30 diagnostic questions about plant symptoms for disease analysis</p>
+                        <div class="status">
+                            <span class="status-indicator status-not-loaded" id="status-disease-tabnet-quiz"></span>
+                            <span>Model Status</span>
+                        </div>
+                    </div>
+                    
+                    <div class="model-card" data-model="insect_tabnet" data-input="quiz">
+                        <div class="input-type-badge">QUIZ</div>
+                        <h3>🔍 Armyworm Assessment</h3>
+                        <p>Complete a detailed questionnaire to identify armyworm infestations</p>
+                        <div class="status">
+                            <span class="status-indicator status-not-loaded" id="status-insect-tabnet-quiz"></span>
+                            <span>Model Status</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- File Upload Section -->
+            <div class="upload-section" id="uploadSection">
+                <h3 id="uploadTitle">Upload Your Data</h3>
+                <p id="uploadInstructions">Select a detection method first</p>
+                <input type="file" id="fileInput" class="file-input" accept="">
+                <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
+                    📁 Choose File
+                </button>
+                <div class="file-info" id="fileInfo">
+                    <strong>Selected file:</strong> <span id="fileName"></span>
+                </div>
+                <button class="predict-btn" id="predictBtn" disabled>🔍 Start Analysis</button>
+            </div>
+
+            <!-- Quiz Section -->
+            <div class="quiz-section" id="quizSection">
+                <div class="quiz-header">
+                    <h3 id="quizTitle">Assessment Questions</h3>
+                    <div class="quiz-stats">
+                        <div class="stat-item">
+                            <div class="stat-value" id="answeredCount">0</div>
+                            <div class="stat-label">Answered</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">30</div>
+                            <div class="stat-label">Total Questions</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="progressPercent">0%</div>
+                            <div class="stat-label">Progress</div>
+                        </div>
+                    </div>
+                    <div class="quiz-progress">
+                        <div class="quiz-progress-fill" id="progressBar"></div>
+                    </div>
+                </div>
+
+                <div class="questions-container" id="questionsContainer">
+                    <!-- Questions will be dynamically generated here -->
+                </div>
+
+                <div class="quiz-actions">
+                    <button class="reset-quiz-btn" onclick="resetQuiz()">🔄 Reset All</button>
+                    <button class="submit-quiz-btn" id="submitQuizBtn" disabled onclick="submitQuiz()">
+                        ✅ Submit Assessment
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results" id="results">
+                <h3>Analysis Results</h3>
+                <div id="resultContent"></div>
+            </div>
+
+            <!-- Loading Section -->
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Processing your request...</p>
+            </div>
+
+            <!-- Error Section -->
+            <div class="error" id="error" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script src="static/scripts.js"></script>
+</body>
+</html>
