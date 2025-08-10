@@ -537,28 +537,53 @@
         }
 
         function createQuestionCard(question, index, container) {
-            const questionCard = document.createElement('div');
-            questionCard.className = 'question-card';
-            
-            const illustration = getQuestionIllustration(question);
-            
-            questionCard.innerHTML = `
-                <div class="question-header">
-                    <div class="question-number">${index + 1}</div>
-                    <div class="question-illustration">${illustration}</div>
-                    <div class="question-text">${question}</div>
-                </div>
-                <div class="answer-options">
-                    <button class="answer-btn" data-question="${index}" data-answer="1" onclick="selectAnswer(${index}, 1, this)">
-                        ✅ Yes
-                    </button>
-                    <button class="answer-btn" data-question="${index}" data-answer="0" onclick="selectAnswer(${index}, 0, this)">
-                        ❌ No
-                    </button>
-                </div>
-            `;
-            container.appendChild(questionCard);
-        }
+    const questionCard = document.createElement('div');
+    questionCard.className = 'question-card';
+    
+    let illustration = getQuestionIllustration(question);
+    if (!illustration) {
+        illustration = `<div style="
+            width:40px;
+            height:40px;
+            background-color:#eee;
+            border-radius:4px;
+            display:inline-block;
+            flex-shrink:0;
+        "></div>`;
+    }
+
+    questionCard.innerHTML = `
+        <div class="question-header" style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+            <!-- Left side: number, illustration, text -->
+            <div style="display:flex; align-items:center; gap:10px; flex:1;">
+                <div class="question-number">${index + 1}</div>
+                <div class="question-illustration">${illustration}</div>
+                <div class="question-text">${question}</div>
+            </div>
+            <!-- Right side: fixed gray placeholder -->
+            <div class="question-image-placeholder" style="
+                width:150px;
+                height:150px;
+                background-color:#ccc;
+                background-image:url('/static/placeholder.jpg');
+                background-size:cover;
+                border-radius:4px;
+                flex-shrink:0;
+            "></div>
+        </div>
+        <div class="answer-options" style="margin-top:8px;">
+            <button class="answer-btn" data-question="${index}" data-answer="1" onclick="selectAnswer(${index}, 1, this)">
+                ✅ Yes
+            </button>
+            <button class="answer-btn" data-question="${index}" data-answer="0" onclick="selectAnswer(${index}, 0, this)">
+                ❌ No
+            </button>
+        </div>
+    `;
+
+    container.appendChild(questionCard);
+}
+
 
         function selectAnswer(questionIndex, answer, buttonElement) {
             const questionCard = buttonElement.closest('.question-card');
